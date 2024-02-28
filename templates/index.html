@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang chủ</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='style/style.css')}}">
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+</head>
+
+<body>
+
+    {% if data %}
+        <a href="{{data}}">Địa điểm</a>
+    {% endif %}
+
+    <div class="container">
+        <a class="btn btn-sm btn-danger" href="/create_page">Tạo mã QR</a>
+        <a class="btn btn-sm btn-success" href="/manage">Quản lý mã QR</a>
+
+        <div id="container">
+            <img id="camera_frame" class="border border-danger" src="{{ url_for('video_feed') }}" alt="Camera Feed"
+                width="800" height="600">
+
+        </div>
+        <div id="group-btn">
+            <button value="bat" id="on-btn" class="btn btn-success me-3 mt-3">Bật</button>
+            <button value="tat" id="off-btn" class="btn btn-danger mt-3">Tắt</button>
+        </div>
+
+        <div class="scan_img d-flex justify-content-center mt-5">
+            <form action="/scanimage" method="POST" enctype="multipart/form-data">
+                <label for="scan_img">Quét mã QR từ tệp : </label>
+                <input type="file" id="scan_img" name="scan_img">
+
+                <button type="submit">Quét mã</button>
+            </form>
+        </div>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
+    </script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
+    <script>
+        $("#off-btn").click(function () {
+            off_mess = $('#off-btn').val()
+            $.ajax({
+                url: '/off_cam',
+                type: 'POST',
+                contentType: "text/plain",
+                data: off_mess,
+                success: function (response) {
+                    if (response == 'stop') {
+                        var cam = document.querySelector('#container')
+                        cam.innerHTML =
+                            "<img id='camera_frame' class='border border-danger' src='' alt='Stoped camera' width='800' height='600'>"
+                    }
+                }
+            })
+        })
+
+        $('#on-btn').click(function () {
+            on_mess = $('#on-btn').val()
+            $.ajax({
+                url: '/on_cam',
+                type: 'POST',
+                contentType: 'text/plain',
+                data: on_mess,
+                success: function (res) {
+                    window.location.reload()
+                }
+            })
+        })
+    </script>
+
+</body>
+</html>

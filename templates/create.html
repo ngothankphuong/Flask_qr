@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tạo mã qr</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+
+</head>
+
+<body>
+
+    {% if message_success %}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{message_success}}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+
+    {% if message_exist %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{message_exist}}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+
+    <a class="btn btn-sm btn-primary" href="/">Quét mã</a>
+    <a class="btn btn-sm btn-success" href="/manage">Quản lý mã QR</a>
+    <form action="/create" class="form-inline container" method="POST">
+        <label class="sr-only" for="inlineFormInputName1">Tên địa điểm</label>
+        <textarea id="inlineFormInputName1" class="form-control mb-2 mr-sm-2" name="input_name" id="" cols="60" rows="4" placeholder="VD : Cần thơ"></textarea>
+
+        <label class="sr-only" for="inlineFormInputGroupUsername2">Vị trí</label>
+        <textarea  name="input_location" class="form-control" id="inlineFormInputGroupUsername2"
+        placeholder="Vị trí trên google map" cols="30" rows="4"></textarea>
+
+        <label class="sr-only" for="inlineFormInputGroupUsername3">Tên ảnh</label>
+        <textarea name="input_name_img" class="form-control" id="inlineFormInputGroupUsername3"
+        placeholder="Tên ảnh QR" cols="30" rows="4"></textarea>
+
+        <button type="submit" class="btn btn-primary mb-2">Tạo mã QR</button>
+    </form>
+
+
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang quản lý</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <!-- jquery  -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo03"
+                aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item mr-5">
+                        <a class="nav-link active btn btn-sm btn-primary" aria-current="page" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active btn btn-sm btn-danger"href="/create_page">Tạo mã QR</a>
+                    </li>
+                </ul>
+                <!-- search group -->
+                <div class="d-flex" role="search">
+                    <input id="input-search" class="form-control me-2" required type="search" placeholder="Search" aria-label="Search">
+                        <button id="submit-search" class="btn btn-outline-success" type="submit">Search</button>
+                    
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Tên</th>
+                <th scope="col">Code</th>
+                <th scope="col">Mã QR</th>
+                <th scope="col">Sửa</th>
+                <th scope="col">Xóa</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in data_list %}
+            <tr>
+                <td scope="row">{{ row[1] }}</td>
+                <td scope="row">{{row[3]}}</td>
+                <td scopr="row"><img src="/static/img/{{row[4]}}.png" alt=""></td>
+                <td>
+                    <div class="group-edit">
+                        <input id="input_id" class="input_id" type="hidden" value="{{row[0]}}" />
+                        <button class="btnEdit btn btn-sm btn-success" type="button" data-bs-toggle="modal"
+                            data-bs-target="#staticBackdrop">Sửa</button>
+                    </div>
+                </td>
+                <td>
+                    <div class="group-del">
+                        <input type="hidden" id="input_del" class="input_del" value="{{row[0]}}">
+                        <button id="btn_del" value="{{row[0]}}" class="btn btn-sm btn-danger btn_del">Xóa</button>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="group-model">
+
+        <!-- Modal -->
+        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="staticBackdropLabel">Chỉnh sửa mã QR</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <input id="id_qr" type="hidden" value="" />
+                            <label for="">Tên : <textarea name="ten" id="ten" cols="60" rows="5"></textarea>
+
+                            </label>
+                            <br>
+                            <label for="url_gg_map">URL :<textarea name="url_gg_map" id="url_gg_map" cols="60"
+                                    rows="10"></textarea> </label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="close-button" type="button" class="btn btn-secondary"
+                            data-bs-dismiss="modal">Đóng</button>
+                        <button id="saveEdit" type="button" class="btn btn-primary">Lưu lại</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var name_address = ""
+        //chinh sua
+        $('.btnEdit').click(function (e) {
+            input_id = $(this).closest(".group-edit").children("input").val();
+            name_address = this.parentNode.parentNode.parentNode.querySelector('td')
+            $.ajax({
+                type: 'POST',
+                url: '/getQR',
+                contentType: 'application/json',
+                data: input_id,
+                success: function (response) {
+                    //var group_model = document.querySelector(".group-model")
+                    var id_qr = response[0][0]
+                    var ten = response[0][1]
+                    var url_map = response[0][2]
+                    $('#ten').val(ten)
+                    $('#url_gg_map').val(url_map)
+                    $('#id_qr').val(id_qr)
+                },
+                error: function (error) {
+                    console.log(error)
+                }
+            })
+        })
+        //luu chinh sua
+        $('#saveEdit').click(function (e) {
+            var tenInput = document.querySelector('#ten').value
+            var url_input = document.querySelector('#url_gg_map').value
+            var id_input = document.querySelector('#id_qr').value
+            name_address.innerHTML = tenInput
+            data = {
+                'ten_input': tenInput,
+                'url_input': url_input,
+                'id_input': id_input,
+            }
+            $.ajax({
+                type: 'POST',
+                url: '/saveUpdate',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function (response) {
+                    alert("Đã cập nhật")
+                    $('#close-button').click()
+                },
+                error: function (error) {
+                    console.log(error)
+                }
+            })
+        });
+        //xoa ma QR
+        $('.btn_del').click(function (e) {
+            id_del = e.target.parentNode.querySelector('input').value
+            console.log(id_del)
+
+            data = {
+                'id_del': id_del,
+            }
+            $.ajax({
+                type: 'POST',
+                url: '/del_item',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function (response) {
+                    console.log(response)
+                    e.target.parentNode.parentNode.parentNode.innerHTML = ""
+                    alert("Đã xóa")
+                },
+                error: function (error) {
+                    console.log(error)
+                }
+            })
+        });
+
+        $('#submit-search').click(function(e){
+            var data_search = $('#input-search').val()
+            window.location.href="/search?data=" + encodeURIComponent(data_search)
+        })
+
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+        integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+        integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous">
+    </script>
+</body>
+
+</html>
